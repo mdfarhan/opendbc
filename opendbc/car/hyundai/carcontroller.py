@@ -231,8 +231,9 @@ class CarController(CarControllerBase, EsccCarController, LeadDataCarController,
       if (self.frame - self.last_button_frame) * DT_CTRL > 0.25:
         # cruise cancel
         if CC.cruiseControl.cancel:
-          # Here we send ACC message to cancel, not buttons. Don't delay
-          if self.CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS:
+          # LFA steering alt button cars cancel with the ACC message, not buttons. Don't delay
+          # LKA steering alt button cars cancel with buttons on 0x1AA, safety does not allow SCC_CONTROL
+          if self.CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS and not lka_steering:
             can_sends.append(hyundaicanfd.create_acc_cancel(self.packer, self.CP, self.CAN, CS.cruise_info))
             self.last_button_frame = self.frame
           elif self.cancel_counter > CANCEL_BUTTON_DELAY_FRAMES:
