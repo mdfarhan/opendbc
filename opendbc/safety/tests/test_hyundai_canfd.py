@@ -47,6 +47,7 @@ class TestHyundaiCanfdBase(HyundaiButtonBase, common.CarSafetyTest, common.Drive
   STEER_MSG = ""
   GAS_MSG = ("", "")
   BUTTONS_TX_BUS = 1
+  ALT_BUTTONS = False
 
   def _torque_driver_msg(self, torque):
     values = {"MDPS_StrTqSnsrVal": torque}
@@ -92,6 +93,18 @@ class TestHyundaiCanfdBase(HyundaiButtonBase, common.CarSafetyTest, common.Drive
   def _main_cruise_button_msg(self, enabled):
     return self._button_msg(0, enabled)
 
+  def test_wrong_address_button_sends(self):
+    """
+      Buttons are only allowed on the address matching the CANFD_ALT_BUTTONS flag:
+      0x1AA on ALT_BUTTONS configs, 0x1CF otherwise
+    """
+    wrong_msg = "CRUISE_BUTTONS" if self.ALT_BUTTONS else "CRUISE_BUTTONS_ALT"
+    self.safety.set_controls_allowed(1)
+    self.safety.set_cruise_engaged_prev(1)
+    for bus in range(4):
+      for btn in range(8):
+        self.assertFalse(self._tx(self.packer.make_can_msg_safety(wrong_msg, bus, {"CRUISE_BUTTONS": btn})))
+
 
 class TestHyundaiCanfdLFASteeringBase(TestHyundaiCanfdBase):
 
@@ -126,6 +139,7 @@ class TestHyundaiCanfdLFASteering(TestHyundaiCanfdLFASteeringBase):
 class TestHyundaiCanfdLFASteeringAltButtonsBase(TestHyundaiCanfdLFASteeringBase):
 
   SAFETY_PARAM: int
+  ALT_BUTTONS = True
 
   def setUp(self):
     self.packer = CANPackerSafety("hyundai_canfd_generated")
@@ -313,6 +327,7 @@ class TestHyundaiCanfdLFASteeringLongAltButtons(TestHyundaiCanfdLFASteeringLongB
 class TestHyundaiCanfdLKASteeringAltButtonsEV(TestHyundaiCanfdLKASteeringEV):
 
   TX_MSGS = [[0x50, 0], [0x1AA, 1], [0x2A4, 0]]
+  ALT_BUTTONS = True
 
   def setUp(self):
     self.packer = CANPackerSafety("hyundai_canfd_generated")
@@ -338,6 +353,7 @@ class TestHyundaiCanfdLKASteeringAltButtonsEV(TestHyundaiCanfdLKASteeringEV):
 class TestHyundaiCanfdLKASteeringAltAltButtonsEV(TestHyundaiCanfdLKASteeringAltEV):
 
   TX_MSGS = [[0x110, 0], [0x1AA, 1], [0x362, 0]]
+  ALT_BUTTONS = True
 
   def setUp(self):
     self.packer = CANPackerSafety("hyundai_canfd_generated")
@@ -365,6 +381,7 @@ class TestHyundaiCanfdLKASteeringLongAltButtonsEV(TestHyundaiCanfdLKASteeringLon
 
   TX_MSGS = [[0x50, 0], [0x1AA, 1], [0x2A4, 0], [0x51, 0], [0x730, 1], [0x12a, 1], [0x160, 1],
              [0x1e0, 1], [0x1a0, 1], [0x1ea, 1], [0x200, 1], [0x345, 1], [0x1da, 1]]
+  ALT_BUTTONS = True
 
   def setUp(self):
     self.packer = CANPackerSafety("hyundai_canfd_generated")
