@@ -329,6 +329,10 @@ class TestHyundaiCanfdLKASteeringAltButtonsEV(TestHyundaiCanfdLKASteeringEV):
     values = {"CRUISE_BUTTONS": buttons, "ADAPTIVE_CRUISE_MAIN_BTN": main_button}
     return self.packer.make_can_msg_safety("CRUISE_BUTTONS_ALT", bus, values)
 
+  def _lkas_button_msg(self, enabled):
+    values = {"LDA_BTN": enabled}
+    return self.packer.make_can_msg_safety("CRUISE_BUTTONS_ALT", self.PT_BUS, values)
+
 
 # LKA_STEER_MSG_ALT (0x110) + ALT_BUTTONS
 class TestHyundaiCanfdLKASteeringAltAltButtonsEV(TestHyundaiCanfdLKASteeringAltEV):
@@ -350,6 +354,10 @@ class TestHyundaiCanfdLKASteeringAltAltButtonsEV(TestHyundaiCanfdLKASteeringAltE
       bus = self.PT_BUS
     values = {"CRUISE_BUTTONS": buttons, "ADAPTIVE_CRUISE_MAIN_BTN": main_button}
     return self.packer.make_can_msg_safety("CRUISE_BUTTONS_ALT", bus, values)
+
+  def _lkas_button_msg(self, enabled):
+    values = {"LDA_BTN": enabled}
+    return self.packer.make_can_msg_safety("CRUISE_BUTTONS_ALT", self.PT_BUS, values)
 
 
 # LKA steering + ALT_BUTTONS + longitudinal
@@ -373,6 +381,10 @@ class TestHyundaiCanfdLKASteeringLongAltButtonsEV(TestHyundaiCanfdLKASteeringLon
       bus = self.PT_BUS
     values = {"CRUISE_BUTTONS": buttons, "ADAPTIVE_CRUISE_MAIN_BTN": main_button}
     return self.packer.make_can_msg_safety("CRUISE_BUTTONS_ALT", bus, values)
+
+  def _lkas_button_msg(self, enabled):
+    values = {"LDA_BTN": enabled}
+    return self.packer.make_can_msg_safety("CRUISE_BUTTONS_ALT", self.PT_BUS, values)
 
 
 if __name__ == "__main__":
